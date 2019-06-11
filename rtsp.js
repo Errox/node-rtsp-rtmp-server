@@ -20,6 +20,8 @@
 
   Sequent = require('sequent');
 
+  streamer = require('./streamers');
+
   rtp = require('./rtp');
 
   sdp = require('./sdp');
@@ -88,7 +90,7 @@
 
   // Two CRLFs
   CRLF_CRLF = [0x0d, 0x0a, 0x0d, 0x0a];
-
+ 
   TIMESTAMP_ROUNDOFF = 4294967296; // 32 bits
 
   if (DEBUG_OUTGOING_PACKET_DATA) {
@@ -528,6 +530,9 @@
           c.on('close', () => {
             var _client, addr, e, ref1;
             logger.info(`[${TAG}:client=${id_str}] disconnected`);
+
+            streamer.removeStreamer(client.id);
+            
             logger.debug(`[${TAG}:client=${id_str}] teardown: session=${sessionID}`);
             try {
               c.end();
@@ -1543,6 +1548,7 @@
       var client, liveRegex, match, pathname, recordedRegex;
       liveRegex = new RegExp(`^/${config.liveApplicationName}/(.*)$`);
       recordedRegex = new RegExp(`^/${config.recordedApplicationName}/(.*)$`);
+      console.log('----s')
       console.log(req.uri);
       console.log('----')
       client = this.clients[socket.clientID];
@@ -2211,9 +2217,15 @@
         res = `RTSP/1.0 405 Method Not Allowed\nCSeq: ${req.headers.cseq}\n\n`.replace(/\n/g, "\r\n");
         return callback(null, res);
       }
+
+      
       streamId = RTSPServer.getStreamIdFromUri(req.uri);
       logger.info(`[${TAG}:client=${client.id}] started uploading stream ${streamId}`);
       stream = avstreams.getOrCreate(streamId);
+
+      streamer.createStreamer(client.id, streamId);
+
+      
       if (client.announceSDPInfo.video != null) {
         this.emit('video_start', stream); // has video
       }

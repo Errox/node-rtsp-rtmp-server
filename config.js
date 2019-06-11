@@ -29,7 +29,7 @@
     // Enable RTMP/RTMPE server (not including RTMPT)
     enableRTMP: false,
     // Enable RTMPT/RTMPTE server
-    enableRTMPT: true,
+    enableRTMPT: false,
     // Enable HTTP server
     enableHTTP: true,
     // Enable custom protocol receiver

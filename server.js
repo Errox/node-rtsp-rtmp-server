@@ -18,16 +18,6 @@
 
   streamServer = new StreamServer;
 
-  // Uncomment this block if you use Basic auth for RTSP
-  //streamServer.setAuthenticator (username, password, callback) ->
-  //  # If isAuthenticated is true, access is allowed
-  // var isAuthenticated = false
-
-  // // //  # Replace here
-  //  if (username == 'username') && (password == 'password'){
-  //       isAuthenticated = true
-  //  }
-
   //  callback null, isAuthenticated
   streamServer.setLivePathConsumer(function(uri, callback) {
     var pathname, ref;
